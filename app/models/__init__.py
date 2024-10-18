@@ -1,5 +1,5 @@
 from .book import BookBase, Book, BookPub, BookCreate, BookUpdate
-from .member import MemberBase, Member
+from .member import MemberBase, Member, MemberPub, MemberCreate, MemberUpdate
 
 __all__ = [
     "BookBase",
@@ -9,4 +9,7 @@ __all__ = [
     "BookUpdate",
     "MemberBase",
     "Member",
+    "MemberPub",
+    "MemberCreate",
+    "MemberUpdate",
 ]

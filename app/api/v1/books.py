@@ -42,7 +42,6 @@ async def create_book(db: DB, book: models.BookCreate) -> Any:
 @router.put("/{book_id}", response_model=models.BookPub)
 async def update_book(db: DB, book_id: int, book: models.BookUpdate) -> Any:
     db_book = db.get(models.Book, book_id)
-    print(db_book)
 
     if not db_book:
         raise HTTPException(status_code=404, detail="Book not found")
