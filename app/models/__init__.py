@@ -1,4 +1,12 @@
-from .book import BookBase, Book
-from .members import MemberBase, Member
+from .book import BookBase, Book, BookPub, BookCreate, BookUpdate
+from .member import MemberBase, Member
 
-__all__ = ["BookBase", "Book", "MemberBase", "Member"]
+__all__ = [
+    "BookBase",
+    "Book",
+    "BookPub",
+    "BookCreate",
+    "BookUpdate",
+    "MemberBase",
+    "Member",
+]

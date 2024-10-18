@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 from sqlmodel import Field, SQLModel
 from pydantic import field_validator
 
@@ -13,17 +13,29 @@ class BookBase(SQLModel):
     num_pages: int = Field(alias="  num_pages")
     ratings_count: int
     text_reviews_count: int
-    publication_date: datetime
+    publication_date: date
     publisher: str
 
     @field_validator("publication_date", mode="before")
     @classmethod
-    def parse_publication_date(cls, value: str | datetime) -> datetime:
+    def parse_publication_date(cls, value: str | date) -> date:
         """Convert string to datetime."""
         if isinstance(value, str):
-            return datetime.strptime(value, "%m/%d/%Y")
+            return datetime.strptime(value, "%m/%d/%Y").date()
         return value
 
 
 class Book(BookBase, table=True):
     id: int | None = Field(default=None, primary_key=True, index=True, alias="bookID")
+
+
+class BookPub(BookBase):
+    id: int
+
+
+class BookCreate(BookBase):
+    pass
+
+
+class BookUpdate(BookBase):
+    pass
