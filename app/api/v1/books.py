@@ -1,6 +1,7 @@
+import logging
 from typing import Annotated, Any
 from fastapi import APIRouter, HTTPException, Query
-from sqlmodel import select
+from sqlmodel import select, col, or_
 
 from app import models
 from app.db import DB
@@ -16,6 +17,24 @@ async def get_books(
     limit: Annotated[int, Query(le=100)] = 100,
 ) -> Any:
     books = db.exec(select(models.Book).offset(offset).limit(limit)).all()
+    return books
+
+
+@router.get("/search", response_model=list[models.BookPub])
+async def search_books(
+    db: DB,
+    title: Annotated[str | None, Query(title="Book title to search")] = "",
+    author: Annotated[str | None, Query(title="Book author to search")] = "",
+) -> Any:
+    books = db.exec(
+        select(models.Book).where(
+            or_(
+                col(models.Book.title).like(f"%{title}%"),
+                col(models.Book.authors).like(f"%{author}%"),
+            )
+        )
+    ).all()
+
     return books
 
 

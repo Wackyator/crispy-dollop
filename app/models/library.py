@@ -6,7 +6,7 @@ from sqlmodel import Field, SQLModel
 class BookLoansBase(SQLModel):
     book_id: int = Field(index=True)
     member_id: int = Field(index=True)
-    loan_date: date | None
+    loan_date: date | None = Field(default=None)
     return_date: date | None = Field(default=None)
 
     @field_validator("loan_date", mode="before")
