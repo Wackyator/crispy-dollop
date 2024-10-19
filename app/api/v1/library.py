@@ -81,3 +81,33 @@ async def return_book(db: DB, loan_id: int) -> Any:
         status_code=status.HTTP_404_NOT_FOUND,
         detail=f"Book loan with id: {loan_id} does not exist.",
     )
+
+
+@router.post(
+    "/clear_dues/{member_id}", response_model=models.TransactionsPub, tags=["members"]
+)
+async def clear_dues(db: DB, member_id: int) -> Any:
+    if member := db.get(models.Member, member_id):
+        if member.outstanding_payment > 0:
+            member.outstanding_payment = 0
+            db.add(member)
+
+            txn = models.Transactions(
+                member_id=member_id, txn_date=datetime.now().date()
+            )
+            db.add(txn)
+
+            db.commit()
+            db.refresh(txn)
+
+            return txn
+
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Member with id: {member_id} does not have any outstanding payment.",
+        )
+
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail=f"Member with id: {member_id} does not exist.",
+    )

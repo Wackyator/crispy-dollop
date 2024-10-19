@@ -1,6 +1,11 @@
 from .book import BookBase, Book, BookPub, BookCreate, BookUpdate
 from .member import MemberBase, Member, MemberPub, MemberCreate, MemberUpdate
 from .library import BookLoansBase, BookLoans, BookLoansPub, BookLoansCreate
+from .transaction import (
+    TransactionsBase,
+    Transactions,
+    TransactionsPub,
+)
 
 __all__ = [
     "BookBase",
@@ -17,4 +22,7 @@ __all__ = [
     "BookLoans",
     "BookLoansPub",
     "BookLoansCreate",
+    "TransactionsBase",
+    "Transactions",
+    "TransactionsPub",
 ]
