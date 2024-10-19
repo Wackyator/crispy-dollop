@@ -16,17 +16,21 @@ async def loan_book(db: DB, book_loan: models.BookLoansCreate) -> Any:
                 status_code=status.HTTP_402_PAYMENT_REQUIRED,
                 detail="You need to clear previous outstanding dues for book loans.",
             )
-        # member is under max outstanding payment allowed, proceed flow
-        if _ := db.get(
-            models.Book, book_loan.book_id
-        ):  # purely a sanity check to see if book exists
-            # assuming the member has fetched book to loan, so it's available in the library?
-            # kinda dodgy, maybe book table should probably have total_stock and available_stock fields
-            # or maybe a book_stock table with isbn and one-to-many to book table?
-            # but oh well, here we go
-            db_book_loan = models.BookLoans.model_validate(book_loan)
 
+        # member is under max outstanding payment allowed, proceed flow
+        if book := db.get(models.Book, book_loan.book_id):
+            if book.stock < 1:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Book with id: {book_loan.book_id} is out of stock.",
+                )
+
+            book.stock -= 1
+            db.add(book)
+
+            db_book_loan = models.BookLoans.model_validate(book_loan)
             db.add(db_book_loan)
+
             db.commit()
             db.refresh(db_book_loan)
 
@@ -52,7 +56,6 @@ async def return_book(db: DB, loan_id: int) -> Any:
                 detail=f"Member with id: {book_loan.member_id} does not exist.",
             )
 
-        # this value is not being utilised anywhere and is purely for sanity check
         book = db.get(models.Book, book_loan.book_id)
         if not book:
             raise HTTPException(
@@ -62,6 +65,9 @@ async def return_book(db: DB, loan_id: int) -> Any:
 
         member.outstanding_payment += constants.LOAN_CHARGE
         db.add(member)
+
+        book.stock += 1
+        db.add(book)
 
         book_loan.return_date = datetime.now().date()
         db.add(book_loan)

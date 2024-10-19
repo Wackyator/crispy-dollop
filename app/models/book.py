@@ -15,6 +15,7 @@ class BookBase(SQLModel):
     text_reviews_count: int
     publication_date: date
     publisher: str
+    stock: int = Field(default=1, ge=0)
 
     @field_validator("publication_date", mode="before")
     @classmethod
