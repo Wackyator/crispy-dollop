@@ -6,7 +6,8 @@ from sqlmodel import Field, SQLModel
 class BookLoansBase(SQLModel):
     book_id: int = Field(index=True)
     member_id: int = Field(index=True)
-    loan_date: date
+    loan_date: date | None
+    return_date: date | None = Field(default=None)
 
     @field_validator("loan_date", mode="before")
     @classmethod
@@ -22,8 +23,10 @@ class BookLoansBase(SQLModel):
 class BookLoans(BookLoansBase, table=True):
     id: int | None = Field(default=None, primary_key=True, index=True)
 
+
 class BookLoansPub(BookLoansBase):
     id: int
+
 
 class BookLoansCreate(BookLoansBase):
     pass

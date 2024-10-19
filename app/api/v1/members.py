@@ -1,4 +1,3 @@
-import logging
 from typing import Annotated, Any
 from fastapi import APIRouter, HTTPException, Query, status
 from sqlmodel import select
