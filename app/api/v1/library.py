@@ -29,6 +29,9 @@ async def loan_book(db: DB, book_loan: models.BookLoansCreate) -> Any:
             book.stock -= 1
             db.add(book)
 
+            member.outstanding_payment += constants.LOAN_CHARGE
+            db.add(member)
+
             db_book_loan = models.BookLoans.model_validate(book_loan)
             db.add(db_book_loan)
 
@@ -63,9 +66,6 @@ async def return_book(db: DB, loan_id: int) -> Any:
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"Book with id: {book_loan.book_id} does not exist.",
             )
-
-        member.outstanding_payment += constants.LOAN_CHARGE
-        db.add(member)
 
         book.stock += 1
         db.add(book)
