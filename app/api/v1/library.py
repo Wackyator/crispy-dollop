@@ -53,30 +53,35 @@ async def loan_book(db: DB, book_loan: models.BookLoansCreate) -> Any:
 @router.put("/return_book")
 async def return_book(db: DB, loan_id: int) -> Any:
     if book_loan := db.get(models.BookLoans, loan_id):
-        member = db.get(models.Member, book_loan.member_id)
-        if not member:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Member with id: {book_loan.member_id} does not exist.",
-            )
+        if book_loan.return_date is None:
+            member = db.get(models.Member, book_loan.member_id)
+            if not member:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"Member with id: {book_loan.member_id} does not exist.",
+                )
 
-        book = db.get(models.Book, book_loan.book_id)
-        if not book:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Book with id: {book_loan.book_id} does not exist.",
-            )
+            book = db.get(models.Book, book_loan.book_id)
+            if not book:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"Book with id: {book_loan.book_id} does not exist.",
+                )
 
-        book.stock += 1
-        db.add(book)
+            book.stock += 1
+            db.add(book)
 
-        book_loan.return_date = datetime.now().date()
-        db.add(book_loan)
+            book_loan.return_date = datetime.now().date()
+            db.add(book_loan)
 
-        db.commit()
-        db.refresh(book_loan)
+            db.commit()
+            db.refresh(book_loan)
 
-        return book_loan
+            return book_loan
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"This book has already been returned.",
+        )
 
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,

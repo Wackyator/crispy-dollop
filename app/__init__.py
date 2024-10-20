@@ -20,8 +20,11 @@ async def home(request: Request) -> Any:
         "request": request,
         "options": [
             {"name": "All Books", "link": "/books"},
-            {"name": "Members", "link": "/members"},
-            {"name": "Library", "link": "/library"},
+            {"name": "Create Book", "link": "/books/create"},
+            {"name": "All Members", "link": "/members"},
+            {"name": "Create Member", "link": "/members/create"},
+            {"name": "Loan Book", "link": "/library/loan"},
+            {"name": "Return Book", "link": "/library/return"},
         ],
     }
 
@@ -133,11 +136,21 @@ async def single_member(request: Request, member_id: int) -> Any:
     return templates.TemplateResponse("error.html", context=data)
 
 
-@app.get("/library", response_class=HTMLResponse)
-async def library(request: Request) -> Any:
+@app.get("/library/loan", response_class=HTMLResponse)
+async def loan_book(request: Request) -> Any:
     data = {
         "app_name": "LibMS",
         "request": request,
     }
 
-    return templates.TemplateResponse("members.html", context=data)
+    return templates.TemplateResponse("loan_book.html", context=data)
+
+
+@app.get("/library/return", response_class=HTMLResponse)
+async def return_book(request: Request) -> Any:
+    data = {
+        "app_name": "LibMS",
+        "request": request,
+    }
+
+    return templates.TemplateResponse("return_book.html", context=data)
