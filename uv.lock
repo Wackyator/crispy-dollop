@@ -232,6 +232,7 @@ source = { virtual = "." }
 dependencies = [
     { name = "alembic" },
     { name = "fastapi", extra = ["standard"] },
+    { name = "httpx" },
     { name = "sqlmodel" },
 ]
 
@@ -244,8 +245,9 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "alembic" },
+    { name = "alembic", specifier = ">=1.13.3" },
     { name = "fastapi", extras = ["standard"], specifier = ">=0.115.2" },
+    { name = "httpx" },
     { name = "sqlmodel", specifier = ">=0.0.22" },
 ]
 

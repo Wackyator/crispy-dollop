@@ -1,7 +1,7 @@
 """regen models
 
 Revision ID: 0a74d48a7776
-Revises: 
+Revises:
 Create Date: 2024-10-20 01:53:56.075909
 
 """

@@ -10,7 +10,7 @@ class BookBase(SQLModel):
     isbn: int = Field(index=True, unique=True)
     isbn13: int = Field(index=True, unique=True)
     language_code: str
-    num_pages: int = Field(alias="  num_pages")
+    num_pages: int
     ratings_count: int
     text_reviews_count: int
     publication_date: date
@@ -27,7 +27,7 @@ class BookBase(SQLModel):
 
 
 class Book(BookBase, table=True):
-    id: int | None = Field(default=None, primary_key=True, index=True, alias="bookID")
+    id: int | None = Field(default=None, primary_key=True, index=True)
 
 
 class BookPub(BookBase):

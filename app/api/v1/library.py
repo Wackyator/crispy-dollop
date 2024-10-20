@@ -4,6 +4,7 @@ from fastapi import APIRouter, HTTPException, status
 
 from app import constants, models
 from app.db import DB
+from app.clients import FrappeClient
 
 router = APIRouter(prefix="/library", tags=["library"])
 
@@ -111,3 +112,28 @@ async def clear_dues(db: DB, member_id: int) -> Any:
         status_code=status.HTTP_404_NOT_FOUND,
         detail=f"Member with id: {member_id} does not exist.",
     )
+
+
+@router.post("/import_books", status_code=201, tags=["books"])
+async def import_books(db: DB) -> Any:
+    total_imported = 0
+
+    try:
+        frappe_books = await FrappeClient.get_book_data()
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail="Unable to import books from frappe at this time.",
+        )
+
+    for fb in frappe_books:
+        if _ := db.get(models.Book, fb.id):
+            continue
+
+        db_book = models.Book.model_validate(fb)
+        db.add(db_book)
+        total_imported += 1
+
+    db.commit()
+
+    return {"success": True, "total_imported": total_imported}

@@ -6,6 +6,7 @@ from .transaction import (
     Transactions,
     TransactionsPub,
 )
+from .frappe import APIResponse as FrappeAPIResponse
 
 __all__ = [
     "BookBase",
@@ -25,4 +26,5 @@ __all__ = [
     "TransactionsBase",
     "Transactions",
     "TransactionsPub",
+    "FrappeAPIResponse",
 ]

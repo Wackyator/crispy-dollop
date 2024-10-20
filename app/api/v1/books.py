@@ -1,4 +1,3 @@
-import logging
 from typing import Annotated, Any
 from fastapi import APIRouter, HTTPException, Query
 from sqlmodel import select, col, or_
@@ -23,8 +22,8 @@ async def get_books(
 @router.get("/search", response_model=list[models.BookPub])
 async def search_books(
     db: DB,
-    title: Annotated[str | None, Query(title="Book title to search")] = "",
-    author: Annotated[str | None, Query(title="Book author to search")] = "",
+    title: Annotated[str | None, Query(title="Book title to search")] = None,
+    author: Annotated[str | None, Query(title="Book author to search")] = None,
 ) -> Any:
     books = db.exec(
         select(models.Book).where(
@@ -48,7 +47,7 @@ async def get_book(db: DB, book_id: int) -> Any:
     return book
 
 
-@router.post("/", response_model=models.BookPub)
+@router.post("/", status_code=201, response_model=models.BookPub)
 async def create_book(db: DB, book: models.BookCreate) -> Any:
     db_book = models.Book.model_validate(book)
     db.add(db_book)
