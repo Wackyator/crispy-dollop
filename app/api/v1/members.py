@@ -1,3 +1,4 @@
+import logging
 from typing import Annotated, Any
 from fastapi import APIRouter, HTTPException, Query, status
 from sqlmodel import select
@@ -30,7 +31,9 @@ async def get_member(db: DB, member_id: int) -> Any:
 
 @router.post("/", response_model=models.MemberPub)
 async def create_member(db: DB, member: models.MemberCreate) -> Any:
-    if db.exec(select(models.Member).where(models.Member.email == member.email)):
+    if _ := db.exec(
+        select(models.Member).where(models.Member.email == member.email)
+    ).first():
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="Account with this email already exists",
