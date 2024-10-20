@@ -21,6 +21,7 @@ async def home(request: Request) -> Any:
         "options": [
             {"name": "All Books", "link": "/books"},
             {"name": "Create Book", "link": "/books/create"},
+            {"name": "Search Book", "link": "/books/search"},
             {"name": "All Members", "link": "/members"},
             {"name": "Create Member", "link": "/members/create"},
             {"name": "Import Books", "link": "/library"},
