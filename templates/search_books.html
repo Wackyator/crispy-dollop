@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="text-3xl font-bold mb-4">Search Books</h1>
+
+<form id="searchForm" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" onsubmit="searchBooks(event)">
+    <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="title">Title</label>
+        <input type="text" id="title" name="title" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+    </div>
+    <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="authors">Author</label>
+        <input type="text" id="authors" name="authors" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+    </div>
+
+    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        Search
+    </button>
+</form>
+
+<div id="results" class="mt-6"></div>
+
+<script>
+    async function searchBooks(event) {
+        event.preventDefault();
+
+        const formData = new FormData(document.getElementById('searchForm'));
+        const params = new URLSearchParams(formData).toString();
+
+        try {
+            const response = await fetch(`/api/v1/books/search?${params}`);
+
+            if (response.ok) {
+                const books = await response.json();
+                displayResults(books);
+            } else {
+                const errorMessage = await response.text();
+                alert(`Error: ${errorMessage}`);
+            }
+        } catch (error) {
+            console.error("Error searching for books:", error);
+            alert("An error occurred while searching for books.");
+        }
+    }
+
+    function displayResults(books) {
+        const resultsDiv = document.getElementById('results');
+        resultsDiv.innerHTML = '';  // Clear previous results
+
+        if (books.length === 0) {
+            resultsDiv.innerHTML = '<p>No books found.</p>';
+            return;
+        }
+
+        // Create a table to display results
+        let tableHTML = `
+            <table class="min-w-full bg-white border border-gray-200">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="border px-4 py-2">ID</th>
+                        <th class="border px-4 py-2">Title</th>
+                        <th class="border px-4 py-2">Authors</th>
+                        <th class="border px-4 py-2">Average Rating</th>
+                        <th class="border px-4 py-2">ISBN</th>
+                        <th class="border px-4 py-2">Publication Date</th>
+                        <th class="border px-4 py-2">Publisher</th>
+                        <th class="border px-4 py-2">Stock</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        books.forEach(book => {
+            tableHTML += `
+                <tr>
+                    <td class="border px-4 py-2">${book.id}</td>
+                    <td class="border px-4 py-2">${book.title}</td>
+                    <td class="border px-4 py-2">${book.authors}</td>
+                    <td class="border px-4 py-2">${book.average_rating}</td>
+                    <td class="border px-4 py-2">${book.isbn}</td>
+                    <td class="border px-4 py-2">${book.publication_date}</td>
+                    <td class="border px-4 py-2">${book.publisher}</td>
+                    <td class="border px-4 py-2">${book.stock}</td>
+                </tr>
+            `;
+        });
+
+        tableHTML += `
+                </tbody>
+            </table>
+        `;
+
+        resultsDiv.innerHTML = tableHTML;
+    }
+</script>
+{% endblock %}

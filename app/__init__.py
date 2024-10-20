@@ -23,6 +23,7 @@ async def home(request: Request) -> Any:
             {"name": "Create Book", "link": "/books/create"},
             {"name": "All Members", "link": "/members"},
             {"name": "Create Member", "link": "/members/create"},
+            {"name": "Import Books", "link": "/library"},
             {"name": "Loan Book", "link": "/library/loan"},
             {"name": "Return Book", "link": "/library/return"},
         ],
@@ -56,6 +57,16 @@ async def create_book(request: Request) -> Any:
     }
 
     return templates.TemplateResponse("book_create.html", context=data)
+
+
+@app.get("/books/search", response_class=HTMLResponse)
+async def search_book(request: Request) -> Any:
+    data = {
+        "app_name": "LibMS",
+        "request": request,
+    }
+
+    return templates.TemplateResponse("search_books.html", context=data)
 
 
 @app.get("/books/{book_id}/edit", response_class=HTMLResponse)
@@ -135,6 +146,15 @@ async def single_member(request: Request, member_id: int) -> Any:
             return templates.TemplateResponse("members.html", context=data)
     return templates.TemplateResponse("error.html", context=data)
 
+
+@app.get("/library", response_class=HTMLResponse)
+async def import_books(request: Request) -> Any:
+    data = {
+        "app_name": "LibMS",
+        "request": request,
+    }
+
+    return templates.TemplateResponse("library.html", context=data)
 
 @app.get("/library/loan", response_class=HTMLResponse)
 async def loan_book(request: Request) -> Any:
