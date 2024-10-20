@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="text-3xl font-bold mb-4">Edit Book</h1>
+
+<form id="editBookForm" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" onsubmit="submitEditForm(event)">
+    <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="title">Title</label>
+        <input type="text" id="title" name="title" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+    </div>
+    <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="authors">Authors</label>
+        <input type="text" id="authors" name="authors" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+    </div>
+    <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="average_rating">Average Rating</label>
+        <input type="number" step="0.1" id="average_rating" name="average_rating" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+    </div>
+    <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="isbn">ISBN</label>
+        <input type="number" id="isbn" name="isbn" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+    </div>
+    <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="isbn13">ISBN13</label>
+        <input type="number" id="isbn13" name="isbn13" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+    </div>
+    <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="language_code">Language Code</label>
+        <input type="text" id="language_code" name="language_code" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+    </div>
+    <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="num_pages">Number of Pages</label>
+        <input type="number" id="num_pages" name="num_pages" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+    </div>
+    <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="ratings_count">Ratings Count</label>
+        <input type="number" id="ratings_count" name="ratings_count" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+    </div>
+    <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="text_reviews_count">Text Reviews Count</label>
+        <input type="number" id="text_reviews_count" name="text_reviews_count" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+    </div>
+    <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="publication_date">Publication Date</label>
+        <input type="text" id="publication_date" name="publication_date" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+    </div>
+    <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="publisher">Publisher</label>
+        <input type="text" id="publisher" name="publisher" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+    </div>
+    <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="stock">Stock</label>
+        <input type="number" id="stock" name="stock" min="0" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+    </div>
+
+    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        Save Changes
+    </button>
+</form>
+
+<script>
+    async function fetchBookData() {
+        try {
+            const response = await fetch(`/api/v1/books/{{ id }}/`);
+            if (response.ok) {
+                const book = await response.json();
+                populateForm(book);
+            } else {
+                alert('Failed to load book data');
+            }
+        } catch (error) {
+            console.error('Error fetching book data:', error);
+            alert('An error occurred while fetching the book data.');
+        }
+    }
+
+    function populateForm(book) {
+        document.getElementById('title').value = book.title;
+        document.getElementById('authors').value = book.authors;
+        document.getElementById('average_rating').value = book.average_rating;
+        document.getElementById('isbn').value = book.isbn;
+        document.getElementById('isbn13').value = book.isbn13;
+        document.getElementById('language_code').value = book.language_code;
+        document.getElementById('num_pages').value = book.num_pages;
+        document.getElementById('ratings_count').value = book.ratings_count;
+        document.getElementById('text_reviews_count').value = book.text_reviews_count;
+        document.getElementById('publication_date').value = book.publication_date;
+        document.getElementById('publisher').value = book.publisher;
+        document.getElementById('stock').value = book.stock;
+    }
+
+    async function submitEditForm(event) {
+        event.preventDefault();
+
+        const formData = new FormData(document.getElementById('editBookForm'));
+        const jsonData = Object.fromEntries(formData.entries());
+
+        try {
+            const response = await fetch(`/api/v1/books/{{ id }}/`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(jsonData)
+            });
+
+            if (response.ok) {
+                window.location.href = `/books/{{ id }}/`;
+            } else {
+                const errorMessage = await response.text();
+                alert(`Error: ${errorMessage}`);
+            }
+        } catch (error) {
+            console.error('Error updating the book:', error);
+            alert('An error occurred while updating the book.');
+        }
+    }
+
+    fetchBookData();  // Load book data when the page loads
+</script>
+{% endblock %}

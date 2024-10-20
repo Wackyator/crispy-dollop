@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1 class="text-3xl font-bold mb-4">Choose to Test</h1>
+    <ul class="space-y-2">
+        {% for option in options %}
+            <li>
+                <a href="{{ option.link }}"
+                   class="block bg-blue-500 text-white text-center py-2 rounded hover:bg-blue-600 transition">
+                    {{ option.name }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
