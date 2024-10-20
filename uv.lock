@@ -247,7 +247,7 @@ dev = [
 requires-dist = [
     { name = "alembic", specifier = ">=1.13.3" },
     { name = "fastapi", extras = ["standard"], specifier = ">=0.115.2" },
-    { name = "httpx" },
+    { name = "httpx", specifier = ">=0.27.2" },
     { name = "sqlmodel", specifier = ">=0.0.22" },
 ]
 
