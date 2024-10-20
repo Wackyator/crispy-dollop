@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="text-3xl font-bold mb-4">Edit Member</h1>
+
+<form id="memberForm" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" onsubmit="submitForm(event)">
+    <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="name">Name</label>
+        <input type="text" id="name" name="name" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+    </div>
+    <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="email">Email</label>
+        <input type="email" id="email" name="email" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+    </div>
+    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        Update
+    </button>
+</form>
+
+<script>
+    // This function will run when the page loads and fetch the member data using the `member_id`
+    async function fetchMemberData() {
+        const memberId = {{ member_id }};  // The `member_id` passed from FastAPI
+
+        try {
+            const response = await fetch(`/api/v1/members/${memberId}`);
+
+            if (response.ok) {
+                const memberData = await response.json();
+
+                // Populate the form fields with the member data
+                document.getElementById('name').value = memberData.name;
+                document.getElementById('email').value = memberData.email;
+            } else {
+                alert("Failed to load member data.");
+            }
+        } catch (error) {
+            console.error("Error fetching member data:", error);
+            alert("An error occurred while fetching member data.");
+        }
+    }
+
+    // Fetch member data when the page is loaded
+    document.addEventListener('DOMContentLoaded', fetchMemberData);
+
+    // Submit the updated form data
+    async function submitForm(event) {
+        event.preventDefault();
+
+        const formData = new FormData(document.getElementById('memberForm'));
+        const jsonData = Object.fromEntries(formData.entries());
+
+        const memberId = {{ member_id }};  // The `member_id` passed from FastAPI
+
+        try {
+            const response = await fetch(`/api/v1/members/${memberId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(jsonData)
+            });
+
+            if (response.ok) {
+                alert("Member updated successfully!");
+                window.location.href = `/members/${memberId}`;  // Redirect to the member's details page
+            } else {
+                const errorMessage = await response.text();
+                alert(`Error: ${errorMessage}`);
+            }
+        } catch (error) {
+            console.error("Error submitting the form:", error);
+            alert("An error occurred while submitting the form.");
+        }
+    }
+</script>
+{% endblock %}

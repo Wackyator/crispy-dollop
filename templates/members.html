@@ -1,1 +1,97 @@
 {% extends "base.html" %}
+
+{% block content %}
+<h1 class="text-3xl font-bold mb-4">Member List</h1>
+
+<table class="min-w-full bg-white border border-gray-300">
+    <thead>
+        <tr class="bg-gray-200">
+            <th class="border border-gray-300 p-2">ID</th>
+            <th class="border border-gray-300 p-2">Name</th>
+            <th class="border border-gray-300 p-2">Email</th>
+            <th class="border border-gray-300 p-2">Outstanding Payment</th>
+            <th class="border border-gray-300 p-2">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for member in members %}
+        <tr id="row-{{ member.id }}">
+            <td class="border border-gray-300 p-2">{{ member.id }}</td>
+            <td class="border border-gray-300 p-2">{{ member.name }}</td>
+            <td class="border border-gray-300 p-2">{{ member.email }}</td>
+            <td class="border border-gray-300 p-2">{{ member.outstanding_payment }}</td>
+            <td class="border border-gray-300 p-2">
+                <button 
+                    class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded"
+                    onclick="deleteMember({{ member.id }})">
+                    Delete
+                </button>
+                <button 
+                    class="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded ml-2"
+                    onclick="clearDues({{ member.id }})">
+                    Clear Dues
+                </button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    async function deleteMember(memberId) {
+        const confirmDelete = confirm("Are you sure you want to delete this member?");
+        if (!confirmDelete) return;
+
+        try {
+            const response = await fetch(`/api/v1/members/${memberId}`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                alert("Member deleted successfully!");
+
+                // Remove the corresponding row from the DOM
+                const row = document.getElementById(`row-${memberId}`);
+                if (row) {
+                    row.remove();
+                }
+            } else {
+                const errorMessage = await response.text();
+                alert(`Failed to delete member: ${errorMessage}`);
+            }
+        } catch (error) {
+            console.error("Error deleting member:", error);
+            alert("An error occurred while deleting the member.");
+        }
+    }
+
+    async function clearDues(memberId) {
+        const confirmClear = confirm("Are you sure you want to clear the library dues for this member?");
+        if (!confirmClear) return;
+
+        try {
+            const response = await fetch(`/api/v1/library/clear_dues/${memberId}`, {
+                method: 'POST'
+            });
+
+            if (response.ok) {
+                alert("Library dues cleared successfully!");
+
+                // Optionally, you can update the member's outstanding payment on the page
+                const row = document.getElementById(`row-${memberId}`);
+                if (row) {
+                    // Update the 'Outstanding Payment' column to 0 (or you could fetch the updated value from the server)
+                    const outstandingPaymentCell = row.cells[3];  // 3 is the index for 'Outstanding Payment'
+                    outstandingPaymentCell.textContent = '0';
+                }
+            } else {
+                const errorMessage = await response.text();
+                alert(`Failed to clear library dues: ${errorMessage}`);
+            }
+        } catch (error) {
+            console.error("Error clearing dues:", error);
+            alert("An error occurred while clearing the library dues.");
+        }
+    }
+</script>
+{% endblock %}

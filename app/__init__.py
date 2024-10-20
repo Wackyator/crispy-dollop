@@ -55,12 +55,12 @@ async def create_book(request: Request) -> Any:
     return templates.TemplateResponse("book_create.html", context=data)
 
 
-@app.get("books/edit/{book_id}", response_class=HTMLResponse)
+@app.get("/books/{book_id}/edit", response_class=HTMLResponse)
 async def edit_book(request: Request, book_id: int) -> Any:
     data = {
         "app_name": "LibMS",
         "request": request,
-        "id": book_id,
+        "member_id": book_id,
     }
 
     return templates.TemplateResponse("book_edit.html", context=data)
@@ -83,13 +83,54 @@ async def single_book(request: Request, book_id: int) -> Any:
 
 
 @app.get("/members", response_class=HTMLResponse)
-async def members(request: Request) -> Any:
+async def all_members(request: Request) -> Any:
     data = {
         "app_name": "LibMS",
         "request": request,
     }
 
-    return templates.TemplateResponse("members.html", context=data)
+    async with httpx.AsyncClient() as client:
+        response = await client.get("http://localhost:8000/api/v1/members/")
+        if response.status_code == 200:
+            data["members"] = response.json()
+            return templates.TemplateResponse("members.html", context=data)
+    return templates.TemplateResponse("error.html", context=data)
+
+
+@app.get("/members/create", response_class=HTMLResponse)
+async def create_member(request: Request) -> Any:
+    data = {
+        "app_name": "LibMS",
+        "request": request,
+    }
+
+    return templates.TemplateResponse("member_create.html", context=data)
+
+
+@app.get("/members/{member_id}/edit", response_class=HTMLResponse)
+async def edit_member(request: Request, member_id: int) -> Any:
+    data = {
+        "app_name": "LibMS",
+        "request": request,
+        "member_id": member_id,
+    }
+
+    return templates.TemplateResponse("member_edit.html", context=data)
+
+
+@app.get("/members/{member_id}", response_class=HTMLResponse)
+async def single_member(request: Request, member_id: int) -> Any:
+    data = {
+        "app_name": "LibMS",
+        "request": request,
+    }
+
+    async with httpx.AsyncClient() as client:
+        response = await client.get(f"http://localhost:8000/api/v1/members/{member_id}")
+        if response.status_code == 200:
+            data["members"] = [response.json()]
+            return templates.TemplateResponse("members.html", context=data)
+    return templates.TemplateResponse("error.html", context=data)
 
 
 @app.get("/library", response_class=HTMLResponse)

@@ -29,7 +29,7 @@ async def get_member(db: DB, member_id: int) -> Any:
     return member
 
 
-@router.post("/", response_model=models.MemberPub)
+@router.post("/", status_code=201, response_model=models.MemberPub)
 async def create_member(db: DB, member: models.MemberCreate) -> Any:
     if _ := db.exec(
         select(models.Member).where(models.Member.email == member.email)
