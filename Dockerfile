@@ -17,6 +17,8 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 
 ENV PATH="/app/.venv/bin:$PATH"
 
+RUN alembic upgrade head
+
 ENTRYPOINT []
 
 CMD ["python", "-m", "app"]
