@@ -12,7 +12,7 @@
 - Alternatively, it can be run via docker.
 ```bash
 docker build -t lib-ms .
-docker run -d --name lib-ms-app -p 8000:8000 lib-ms 
+docker run -d --name lib-ms-app -p 8000:8500 lib-ms 
 ```
 
 ## Screenshots

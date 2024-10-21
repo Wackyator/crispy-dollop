@@ -42,7 +42,7 @@ async def all_books(request: Request) -> Any:
     }
 
     async with httpx.AsyncClient() as client:
-        response = await client.get("http://localhost:8000/api/v1/books/")
+        response = await client.get("http://localhost:8500/api/v1/books/")
         if response.status_code == 200:
             data["books"] = response.json()
             return templates.TemplateResponse("books.html", context=data)
@@ -89,7 +89,7 @@ async def single_book(request: Request, book_id: int) -> Any:
     }
 
     async with httpx.AsyncClient() as client:
-        response = await client.get(f"http://localhost:8000/api/v1/books/{book_id}")
+        response = await client.get(f"http://localhost:8500/api/v1/books/{book_id}")
         if response.status_code == 200:
             data["books"] = [response.json()]
             return templates.TemplateResponse("books.html", context=data)
@@ -105,7 +105,7 @@ async def all_members(request: Request) -> Any:
     }
 
     async with httpx.AsyncClient() as client:
-        response = await client.get("http://localhost:8000/api/v1/members/")
+        response = await client.get("http://localhost:8500/api/v1/members/")
         if response.status_code == 200:
             data["members"] = response.json()
             return templates.TemplateResponse("members.html", context=data)
@@ -141,7 +141,7 @@ async def single_member(request: Request, member_id: int) -> Any:
     }
 
     async with httpx.AsyncClient() as client:
-        response = await client.get(f"http://localhost:8000/api/v1/members/{member_id}")
+        response = await client.get(f"http://localhost:8500/api/v1/members/{member_id}")
         if response.status_code == 200:
             data["members"] = [response.json()]
             return templates.TemplateResponse("members.html", context=data)
