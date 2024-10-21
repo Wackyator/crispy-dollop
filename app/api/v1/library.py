@@ -80,7 +80,7 @@ async def return_book(db: DB, loan_id: int) -> Any:
             return book_loan
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"This book has already been returned.",
+            detail="This book has already been returned.",
         )
 
     raise HTTPException(

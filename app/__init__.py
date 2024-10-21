@@ -157,6 +157,7 @@ async def import_books(request: Request) -> Any:
 
     return templates.TemplateResponse("library.html", context=data)
 
+
 @app.get("/library/loan", response_class=HTMLResponse)
 async def loan_book(request: Request) -> Any:
     data = {
