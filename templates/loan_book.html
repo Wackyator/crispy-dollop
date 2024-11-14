@@ -35,8 +35,10 @@
             });
 
             if (response.ok) {
-                alert("Book loaned successfully!");
-                window.location.href = '/';  // Redirect to the home page
+                const resp = await response.json();
+                alert(`Book loaned successfully with loan_id: ${(resp.id)}!`);
+                console.log("buh")
+                // window.location.href = '/';  // Redirect to the home page
             } else {
                 const errorMessage = await response.text();
                 alert(`Error: ${errorMessage}`);
