@@ -1,14 +1,20 @@
 from datetime import datetime
+import logging
 from typing import Any
 from fastapi import APIRouter, HTTPException, status
 
-from app import constants, models
+from app import models
 from app.crud.library import CRUDBookLoans
 from app.db import DB
 from app.clients import FrappeClient
 
 router = APIRouter(prefix="/library", tags=["library"])
 
+@router.get("/get_loans", response_model=list[models.BookLoansPub])
+async def get_loans(db: DB) -> Any:
+    all_data = CRUDBookLoans().get_all(db)
+    logging.error(f"{all_data=}")
+    return all_data
 
 @router.post("/loan_book", response_model=models.BookLoansPub)
 async def loan_book(db: DB, book_loan: models.BookLoansCreate) -> Any:

@@ -4,9 +4,7 @@ from sqlmodel import SQLModel
 from app import constants, models
 from app.crud.base import CRUDBase
 from app.db import DB
-from app.models.book import BookBase
 from app.models.library import BookLoans, BookLoansCreate
-from app.models.member import MemberBase
 
 
 class CRUDBookLoans(CRUDBase):

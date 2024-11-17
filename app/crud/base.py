@@ -20,7 +20,7 @@ class CRUDBase:
             return obj
         raise HTTPException(status_code=404, detail=f"{self.get_name()} not found")
 
-    def list(self, db: DB, offset: int = 0, limit: int = 100) -> type[SQLModel]:
+    def get_all(self, db: DB, offset: int = 0, limit: int = 100) -> type[SQLModel]:
         return db.exec(select(self.get_inner()).offset(offset).limit(limit)).all()
 
     def create(self, db: DB, create_obj: type[SQLModel], commit: bool = True, *args, **kwargs) -> type[SQLModel]:
